@@ -2,6 +2,9 @@
 import numpy as np
 import math
 
+#teste
+from numpy import linalg as LA
+
 def norma(a):
     somaquadrada = 0
     for i in range (len(a)):
@@ -12,37 +15,17 @@ def escalar(wnT, a0):
     #Calcula o produto escalar entre dois numpy arrays
     return sum(wnT*a0)
 
-def getAn(A, n):
-    '''
-    Essa função retorna uma matriz com os a's minúsculos em colunas para cada iteração de wn
-    Retorna uma partição da matriz A, que será usada na iteração n para calcular o HwnA
-    '''
-    an = np.array([])
-    an = A[n:len(A), n-1:]
-    return an
-
-def getWnT(an):
+def getWn(A, n):
     '''
     Essa função retorna o wn como vetor coluna
     '''
+    an = A[n:len(A), n-1:] #an são as colunas abaixo da diagonal principal dependendo da iteração
     an = an.T
     wnT = np.array([an[0][0] + np.sign(an[0][0])*norma(an[0])]) #Primeiro Valor de wn
     for i in range(1, len(an[0])):
         wnT = np.append(wnT, an[0][i])
 
     return wnT.T
-
-#A função abaixo não está sendo usada
-def linhaMatrizHwnA(wn, A, n): #n é o numero da linha a ser preenchida
-    tamanhoA = len(A)
-    tamanhoWn = len(wn)
-    linha = np.zeros((len(A), 1)) #Valor Inicial
-    for i in range(len(linha)):
-        if (i >= tamanhoA - tamanhoWn):
-            linha[i] = wn[i-(tamanhoA - tamanhoWn)]
-        else:
-            linha[i] = A[i][n]
-    return linha
 
 def getHwnA(an, wn, A):
     an = an.T
@@ -55,62 +38,129 @@ def getHwnA(an, wn, A):
     HwnA = HwnA.reshape(A.shape)
     return HwnA
 
-def getAlfa(A):
-    alfa = A[1: , 0]
-    return alfa
+def multiplicaHwnDireita(X, wn, linha, coluna):
+    for i in range(linha, len(X)):
+        X[i, coluna:] = X[i, coluna:] - 2*(escalar(X[i,coluna:], wn)/escalar(wn, wn))*wn.T
+    return X
 
-def getAHwnAlfa(alfa, wn): #nome da função ta errado, não tá?
-    Hwnalfa = alfa - 2*(escalar(wn, alfa)/escalar(wn, wn))*wn
-    return Hwnalfa
+def multiplicaHwnEsquerda(X, wn, iteracao):
+    for i in range(iteracao-1, len(X)):
+        X[iteracao:, i] = X[iteracao:, i] - 2*(escalar(wn, X[iteracao:, i])/escalar(wn, wn))*wn
+    return X
 
-def getHwnAnHwn(HwnA, wn, n):
-    '''
-    Essa função seria a multiplicação de Hwn pela direita.
-    n é o número da iteração
-    '''
-    HwnAnwn = np.array([])
-    for i in range(1, len(HwnA)):
-        HwnAnwn = np.append(HwnAnwn, HwnA[i,n:] - 2*(escalar(HwnA[i,n:], wn)/escalar(wn, wn))*wn.T)
-    HwnAnwn = HwnAnwn.reshape([len(HwnA)-n, len(HwnA)-n])
-    return HwnAnwn
+def rebaterColunaNaLinha(matriz, n):
+    matriz[n-1, n:] = matriz[n: , n-1]
+    return matriz
 
-def juntarHwnAHwn(HwnAlfa, HwnAnHwn, n):
-    HwnAHwn = np.identity(len(HwnAnHwn) + n)
-    HwnAHwn[n-1, n:] = HwnAlfa
-    HwnAHwn[n:, n-1] = HwnAlfa.T
-    HwnAHwn[n: , n: ] = HwnAnHwn
-    return HwnAHwn
+def householder(A):
+    Ht = np.identity(len(A))
+    HwnAHwn = A
+    for i in range(1, len(A)-1):
+        wn = getWn(HwnAHwn, i)
+        HwnA = multiplicaHwnEsquerda(HwnAHwn, wn, i)
+        HwnAHwn = multiplicaHwnDireita(HwnA, wn, i, i) #Tanto a linha quanto a coluna tem que ser o valor da iteração
+        HwnAHwn = rebaterColunaNaLinha(HwnAHwn, i)
+        Ht = multiplicaHwnDireita(Ht, wn, 0, i)
+    return (HwnAHwn, Ht)
 
+def testeA():
+    A = np.array([[2, 4, 1, 1], [4, 2, 1, 1], [1, 1, 1, 2], [1, 1, 2, 1]])
+    A = A.astype(float)
+    print(A)
+    HwnAHwn, Ht = householder(A)
+    #Ep1
+    w, v = LA.eig(A)
+    print(w)
+    print(v)
+    #Verificar A*v = lambda*v
+    #Verificar se a matriz formada pelos autovetores é ortogonal
+        #Basta multiplicar a matriz de autovetores pela sua transposta e verificar se resulta na identidade
+    
+def testeB():
+    A = np.zeros((20,20))
+    for i in range(20):
+        for j in range(20):
+            A[i][j] = 20-max(i,j)
+    print(A)
+    w, v = LA.eig(A)
+    print(w)
+    #print(v)
+    w_correcao = np.array([])
+    for i in range(1, 21):
+        w_correcao = np.append(w_correcao, (1/2)*pow((1 - math.cos((2*i - 1)*math.pi/(2*20 + 1))), -1))
+    print(w_correcao)
 
+def getKij(A, E, L, theta):
+    c = math.cos(theta)
+    s = math.sin(theta)
+    matriz = np.array([c^2, c*s, -1*c^2, -1*c*s], [c*s, s^2, -1*c*s, -1*s^2], [-1*c^2, -1*c*s, c*s], [-1*c*s, -1*s^2, c*s, s^2])
+    Kij = (A*E/L)*matriz
+    return Kij
 
+def writeToK(K, Kij, i, j):
+    K[2*i-1][2*i-1] += Kij[0][0]
+    K[2*i-1][2*i] += Kij[0][1]
+    K[2*i-1][2*j-1] += Kij[0][2]
+    K[2*i-1][2*j] += Kij[0][3]
+    
+    K[2*i][2*i-1] += Kij[1][0]
+    K[2*i][2*i] += Kij[1][1]
+    K[2*i][2*j-1] += Kij[1][2]
+    K[2*i][2*j] += Kij[1][3]
+    
+    K[2*j-1][2*i-1] += Kij[2][0]
+    K[2*j-1][2*i] += Kij[2][1]
+    K[2*j-1][2*j-1] += Kij[2][2]
+    K[2*j-1][2*j] += Kij[2][3]
+
+    K[2*j][2*i-1] += Kij[3][0]
+    K[2*j][2*i] += Kij[3][1]
+    K[2*j][2*j-1] += Kij[3][2]
+    K[2*j][2*j] += Kij[3][3]
+    return K
+
+def tarefaC():
+    entrada = input().split(" ")
+    totalNos = int(entrada[0])
+    nosNaoFixos = int(entrada[1])
+    numBarras = int(entrada[2])
+
+    print(totalNos)
+    entrada = input().split(" ")
+    densidade = float(entrada[0])
+    secaoA = float(entrada[1])
+    elasticidadeE = float(entrada[2])
+    
+    K = np.zeros((nosNaoFixos*2, nosNaoFixos*2)) #Ou numBarras?
+    for i in range(numBarras):
+        entrada = input().split(" ")
+        no1 = int(entrada[0])
+        no2 = int(entrada[1])
+        angulo = float(entrada[2])
+        comprimento = float(entrada[3])
+        Kij = getKij(secaoA, elasticidadeE, comprimento, angulo)
+        K = writeToK(K, Kij, no1, no2)
+        
+
+    # K = np.zeros((24, 24)) # parametrizar
+    # Kij = getKij()
+
+    
 def main():
     #Primeiro Exemplo feito "na mão"
-    A = np.array([[2, -1, 1, 3], [-1, 1, 4, 2], [1, 4, 2, -1], [3, 2, -1, 1]])
-
-    #Primeira iteração
-    an = getAn(A, 1)
-    wn = getWnT(an)
-    HwnA = getHwnA(an, wn, A)
-    alfa = getAlfa(A)
-    Hw1alfa = getAHwnAlfa(alfa, wn)
-    print("Hw1alfa é: \n", Hw1alfa)
-    Hw1A1Hw1 = getHwnAnHwn(HwnA, wn, 1) #1 sendo o número da iteração
-    print('Hw1A1Hw1 é: \n', Hw1A1Hw1)
-    Hw1AHw1 = juntarHwnAHwn(Hw1alfa, Hw1A1Hw1, 1)
-    print('Hw1AHw1 é: \n', Hw1AHw1)
-
-    Ht = np.identity(len(A)) #Iniciando a matriz de vetores
-    Ht = getHwnAnHwn(Ht, wn, 1) #Multiplicando Hw1 pela esquerda - só isso que essa função faz
-    print('Ht é: \n', Ht) #Falta deixar ela 4x4. Aqui ela está 3x3
-    
-    #Fim da primeira iteração
+    entrada = np.array([[2, -1, 1, 3], [-1, 1, 4, 2], [1, 4, 2, -1], [3, 2, -1, 1]])
+    A = entrada.astype(float)
+    HwnAHwn, Ht = householder(A)
+    #testeA()
+    #testeB()
+    tarefaC()
 
     #Atenção os valores passados nessas funções estão como apresentados no exemplo
 
 if __name__ == '__main__':
     main()
 
-
+#Aula no moodle pra tirar duvida
 
 #Para concatenar matrizes e usando a função pra expandir a linha de Hw1a1
     # linha0 = linhaMatrizHwnA(wn, A, 0)
