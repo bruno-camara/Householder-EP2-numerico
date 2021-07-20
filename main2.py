@@ -56,7 +56,6 @@ def householder(A):
     Ht = np.identity(len(A))
     HwnAHwn = A
     for i in range(1, len(A)-1):
-<<<<<<< HEAD
         wn = getWn(HwnAHwn, i)
         HwnA = multiplicaHwnEsquerda(HwnAHwn, wn, i)
         HwnAHwn = multiplicaHwnDireita(HwnA, wn, i, i) #Tanto a linha quanto a coluna tem que ser o valor da iteração
@@ -145,22 +144,9 @@ def tarefaC():
 
     # K = np.zeros((24, 24)) # parametrizar
     # Kij = getKij()
-=======
-        print(i)
-        wn = getWn(HwnAHwn, i)
-        HwnA = multiplicaHwnEsquerda(HwnAHwn, wn, i)
-        HwnAHwn = multiplicaHwnDireita(HwnA, wn, i, i) #Tanto a linha quanto a coluna tem que ser o valor da iteração
-
-        HwnAHwn = rebaterColunaNaLinha(HwnAHwn, i)
-        print(HwnAHwn)
-        Ht = multiplicaHwnDireita(Ht, wn, 0, i)
-        print(HwnAHwn)
-    return (HwnAHwn, Ht)
->>>>>>> 5455b928af5a7d0ee83e3292a39c86c9098cc6c6
 
     
 def main():
-<<<<<<< HEAD
     #Primeiro Exemplo feito "na mão"
     entrada = np.array([[2, -1, 1, 3], [-1, 1, 4, 2], [1, 4, 2, -1], [3, 2, -1, 1]])
     A = entrada.astype(float)
@@ -168,16 +154,6 @@ def main():
     #testeA()
     #testeB()
     tarefaC()
-=======
-    entrada = np.array([[2, -1, 1, 3], [-1, 1, 4, 2], [1, 4, 2, -1], [3, 2, -1, 1]])
-    A = entrada.astype(float)
-    print(A)
-    HwnAHwn, Ht = householder(A)
-    print("HwnAHwn:")
-    print(HwnAHwn)
-    print("\nHt:")
-    print(Ht)
->>>>>>> 5455b928af5a7d0ee83e3292a39c86c9098cc6c6
 
     #Atenção os valores passados nessas funções estão como apresentados no exemplo
 
