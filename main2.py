@@ -131,7 +131,8 @@ def tarefaC():
     secaoA = float(entrada[1])
     elasticidadeE = float(entrada[2])
     
-    K = np.zeros((totalNos*2, totalNos*2))
+    K = np.zeros((totalNos*2+1, totalNos*2+1))
+    M = np.zeros((totalNos*2+1, totalNos*2+1))
     for i in range(numBarras):
         entrada = input().split(" ")
         no1 = int(entrada[0])
@@ -139,13 +140,13 @@ def tarefaC():
         angulo = float(entrada[2])
         comprimento = float(entrada[3])
         Kij = getKij(secaoA, elasticidadeE, comprimento, angulo)
-        K = writeToK(K, Kij, no1-1, no2-1)
-    K = K[:nosNaoFixos*2, :nosNaoFixos*2]
-    print(K)
-        
-
-    # K = np.zeros((24, 24)) # parametrizar
-    # Kij = getKij()
+        K = writeToK(K, Kij, no1, no2)
+        M[2*no1][2*no1] += 0.5*densidade*secaoA*comprimento
+        M[2*no1-1][2*no1-1] += 0.5*densidade*secaoA*comprimento
+        M[2*no2][2*no2] += 0.5*densidade*secaoA*comprimento
+        M[2*no2-1][2*no2-1] += 0.5*densidade*secaoA*comprimento
+    K = K[1:nosNaoFixos*2, 1:nosNaoFixos*2]
+    M = M[1:nosNaoFixos*2, 1:nosNaoFixos*2]
 
     
 def main():
