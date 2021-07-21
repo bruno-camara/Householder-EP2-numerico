@@ -131,7 +131,7 @@ def tarefaC():
     secaoA = float(entrada[1])
     elasticidadeE = float(entrada[2])
     
-    K = np.zeros((nosNaoFixos*2, nosNaoFixos*2)) #Ou numBarras?
+    K = np.zeros((totalNos*2, totalNos*2))
     for i in range(numBarras):
         entrada = input().split(" ")
         no1 = int(entrada[0])
@@ -139,7 +139,8 @@ def tarefaC():
         angulo = float(entrada[2])
         comprimento = float(entrada[3])
         Kij = getKij(secaoA, elasticidadeE, comprimento, angulo)
-        K = writeToK(K, Kij, no1, no2)
+        K = writeToK(K, Kij, no1-1, no2-1)
+    K = K[:nosNaoFixos*2, :nosNaoFixos*2]
         
 
     # K = np.zeros((24, 24)) # parametrizar
