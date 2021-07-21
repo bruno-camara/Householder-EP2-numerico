@@ -91,10 +91,8 @@ def testeB():
     print(w_correcao)
 
 def getKij(A, E, L, theta):
-    c = math.cos(theta)
-    s = math.sin(theta)
-    matriz = np.array([c^2, c*s, -1*c^2, -1*c*s], [c*s, s^2, -1*c*s, -1*s^2], [-1*c^2, -1*c*s, c*s], [-1*c*s, -1*s^2, c*s, s^2])
-    Kij = (A*E/L)*matriz
+    matriz = np.array([[c**2, c*s, -1*c**2, -1*c*s], [c*s, s**2, -1*c*s, -1*s**2], [-1*c**2, -1*c*s, c**2, c*s], [-1*c*s, -1*s**2, c*s, s**2]])
+    Kij = (A*E/L) * matriz
     return Kij
 
 def writeToK(K, Kij, i, j):
