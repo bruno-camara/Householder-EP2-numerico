@@ -91,10 +91,10 @@ def testeB():
     print(w_correcao)
 
 def getKij(A, E, L, theta):
-    c = math.cos(theta)
-    s = math.sin(theta)
+    c = math.cos(math.radians(theta))
+    s = math.sin(math.radians(theta))
     matriz = np.array([[c**2, c*s, -1*c**2, -1*c*s], [c*s, s**2, -1*c*s, -1*s**2], [-1*c**2, -1*c*s, c**2, c*s], [-1*c*s, -1*s**2, c*s, s**2]])
-    Kij = np.multiply((A*E/L), matriz)
+    Kij = (A*E/L) * matriz
     return Kij
 
 def writeToK(K, Kij, i, j):
@@ -119,25 +119,19 @@ def writeToK(K, Kij, i, j):
     K[2*j][2*j] += Kij[3][3]
     return K
 
-def writeToPartK(K, Kij, i, j):
-    K[2*i-1][2*i-1] += Kij[0][0]
-    K[2*i-1][2*i] += Kij[0][1]
-    K[2*i][2*i-1] += Kij[1][0]
-    K[2*i][2*i] += Kij[1][1]
-    return K
-
 def tarefaC():
     entrada = input().split(" ")
     totalNos = int(entrada[0])
     nosNaoFixos = int(entrada[1])
     numBarras = int(entrada[2])
 
+    print(totalNos)
     entrada = input().split(" ")
     densidade = float(entrada[0])
     secaoA = float(entrada[1])
     elasticidadeE = float(entrada[2])
     
-    K = np.zeros((nosNaoFixos*2, nosNaoFixos*2)) #Ou numBarras?
+    K = np.zeros((totalNos*2, totalNos*2))
     for i in range(numBarras):
         entrada = input().split(" ")
         no1 = int(entrada[0])
@@ -145,13 +139,8 @@ def tarefaC():
         angulo = float(entrada[2])
         comprimento = float(entrada[3])
         Kij = getKij(secaoA, elasticidadeE, comprimento, angulo)
-        if (no1 == 14 or no2 == 14 or no2 == 13 or no1 == 13):
-            K = writeToPartK(K, Kij, no1-1, no2-1)
-        else:
-            K = writeToK(K, Kij, no1-1, no2-1)
-    
-    print(np.shape(K))
-    K = K.reshape((24,24))
+        K = writeToK(K, Kij, no1-1, no2-1)
+    K = K[:nosNaoFixos*2, :nosNaoFixos*2]
     print(K)
         
 
