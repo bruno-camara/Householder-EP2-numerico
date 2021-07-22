@@ -217,6 +217,10 @@ def tarefaC(isBonus):
     autoval, autovet = QRAlgorithm(Ktil, Ht) # EP1
     # autoval, autovet = LA.eig(matrizoriginal)
 
+    #for i in range(len(autoval)):
+    #    print(i+1, autoval[i])
+    #    print(i+1, )
+
     autoval = np.power(autoval, (1/2))
     indexMenores = [0] * 5
     valorMenores = [0] * 5
@@ -235,12 +239,19 @@ def tarefaC(isBonus):
         print("# i", end=" ")
         for i in range(args.numquadros):
             print("Xi("+str(i*args.tempo)+") Yi("+str(i*args.tempo)+")", end=" ")
+        print()
+        for i in range(nosNaoFixos):
+            print(i+1, end=" ")
+            for j in range(args.numquadros):
+                print(autovet[args.frequencia-1][2*i]*math.cos(autoval[args.frequencia-1]*j*args.tempo), end=" ")
+                print(autovet[args.frequencia-1][2*i+1]*math.cos(autoval[args.frequencia-1]*j*args.tempo), end=" ")
+            print()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="EP2 de MAP3121")
     parser.add_argument('tarefa', choices=['a','b','c','d'], help='qual tarefa a ser executada (a, b, c ou d)')
     parser.add_argument('-f', '--frequencia', type=int, choices=[1,2,3,4,5], help="qual das 5 menores frequências de vibração será usada para gerar as imagens", default=1)
-    parser.add_argument('-n', '--numquadros', type=float, help="quantas figuras devem ser geradas", default=4)
+    parser.add_argument('-n', '--numquadros', type=int, help="quantas figuras devem ser geradas", default=4)
     parser.add_argument('-t', '--tempo', type=float, help="intervalo de tempo entre figuras", default=200)
     # parser.add_argument()
     args = parser.parse_args()
