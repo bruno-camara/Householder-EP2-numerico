@@ -74,14 +74,14 @@ def testeA():
     
 
     HwnAHwn, Ht = householder(A)
-    print("Matriz tridiagonalizada: ")
+    print("\nMatriz tridiagonalizada: ")
     print(HwnAHwn)
 
     w, v = QRAlgorithm(HwnAHwn, Ht) #EP1
     #Verificar A*v = lambda*v
     erro = 0
     for i in range(len(w)):
-        print("Verificando A*v = w*v para "+str(i+1)+"º autovetor")
+        print("\nVerificando A*v = w*v para "+str(i+1)+"º autovetor")
         print("V = ", v[:,i])
         print("A*v = ", np.matmul(matrizoriginal, v[:, i]))
         print("w*v = ", w[i]*v[:, i])
@@ -217,10 +217,6 @@ def tarefaC(isBonus):
     autoval, autovet = QRAlgorithm(Ktil, Ht) # EP1
     # autoval, autovet = LA.eig(matrizoriginal)
 
-    for i in range(len(autoval)):
-        print(i+1, autoval[i])
-        print(i+1, )
-
     autoval = np.power(autoval, (1/2))
     indexMenores = [0] * 5
     valorMenores = [0] * 5
@@ -243,9 +239,9 @@ def tarefaC(isBonus):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="EP2 de MAP3121")
     parser.add_argument('tarefa', choices=['a','b','c','d'], help='qual tarefa a ser executada (a, b, c ou d)')
-    parser.add_argument('-f', '--frequencia', type="int", choices=[1,2,3,4,5], help="qual das 5 menores frequências de vibração será usada para gerar as imagens", default=1)
-    parser.add_argument('-n', '--numquadros', type="float", help="quantas figuras devem ser geradas", default=4)
-    parser.add_argument('-t', '--tempo', type="float", help="intervalo de tempo entre figuras", default=200)
+    parser.add_argument('-f', '--frequencia', type=int, choices=[1,2,3,4,5], help="qual das 5 menores frequências de vibração será usada para gerar as imagens", default=1)
+    parser.add_argument('-n', '--numquadros', type=float, help="quantas figuras devem ser geradas", default=4)
+    parser.add_argument('-t', '--tempo', type=float, help="intervalo de tempo entre figuras", default=200)
     # parser.add_argument()
     args = parser.parse_args()
     if args.tarefa == "a":
