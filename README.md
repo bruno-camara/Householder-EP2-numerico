@@ -10,10 +10,10 @@ O código foi feito em python 3.7.2 <br>
 Para rodar o programa é necessário estar no PowerShell do Windows, ou no bash do Linux
 1. Navegue até a pasta em que o arquivo ep2.py está localizado
 2. O comando python ep2.py -h exibe informacoes sobre o uso
-3. Para executar o item a digite no terminal: cat input-a | python ep2.py a
-4. Para executar o item b digite no terminal: cat input-b | python ep2.py b
-5. Para executar o item c digite no terminal: cat input-c | python ep2.py c
-6. Para executar o item c digite no terminal: cat input-c | python ep2.py d | python plot.py
+3. Para executar o item a digite no terminal: `cat input-a | python ep2.py a`
+4. Para executar o item b digite no terminal: `cat input-b | python ep2.py b`
+5. Para executar o item c digite no terminal: `cat input-c | python ep2.py c`
+6. Para executar o item c digite no terminal: `cat input-c | python ep2.py d | python plot.py`
     * **Observação:** para executar a tarefa d, é possível especificar os seguintes parâmetros.
         - A opção -f <opcao> especifica qual das menores frequências de vibração será utilizada para a geração das imagens (1=menor freq, 5=maior) (padrão=1)
         - A opção -n <int> especifica quantos quadros serão gerados (padrão=4)
